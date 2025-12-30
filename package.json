@@ -1,0 +1,32 @@
+{
+  "name": "triviat-qa",
+  "version": "1.0.0",
+  "description": "Repository used for Automation Tests",
+  "main": "index.js",
+  "scripts": {
+    "test": "playwright test",
+    "test:staging": "ENV=staging playwright test",
+    "test:release": "ENV=release playwright test",
+    "test:ui": "playwright test --ui",
+    "test:ui:staging": "ENV=staging playwright test --ui",
+    "test:ui:release": "ENV=release playwright test --ui",
+    "test:debug": "playwright test --debug",
+    "test:headed": "playwright test --headed",
+    "test:report": "playwright show-report"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/triviat-ai/triviat-qa.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/triviat-ai/triviat-qa/issues"
+  },
+  "homepage": "https://github.com/triviat-ai/triviat-qa#readme",
+  "devDependencies": {
+    "@playwright/test": "^1.57.0",
+    "dotenv": "^17.2.3"
+  }
+}
