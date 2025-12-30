@@ -19,6 +19,7 @@ jobs:
       BASE_URL: ${{ vars.BASE_URL }}
       EMAIL: ${{ secrets.EMAIL }}
       PASSWORD: ${{ secrets.PASSWORD }}
+      GOOGLE_CHAT_WEBHOOK: ${{ secrets.GOOGLE_CHAT_WEBHOOK }}
 
     steps:
       - name: Checkout
@@ -46,4 +47,17 @@ jobs:
           path: playwright-report
           if-no-files-found: ignore
 
+      - name: Notify Google Chat
+        if: always()
+        run: |
+          STATUS="${{ job.status }}"
+          COLOR="🟢"
+          if [ "$STATUS" != "success" ]; then
+            COLOR="🔴"
+          fi
 
+          curl -X POST -H "Content-Type: application/json" \
+            -d "{
+              \"text\": \"$COLOR *Playwright Staging Pipeline*\nStatus: *$STATUS*\nRepo: ${{ github.repository }}\nRun: ${{ github.run_number }}\nEnvironment: Staging\n<${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}|View details>\"
+            }" \
+            "${{ secrets.GOOGLE_CHAT_WEBHOOK }}"
