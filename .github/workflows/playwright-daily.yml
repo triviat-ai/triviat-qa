@@ -1,0 +1,49 @@
+name: Playwright Staging Daily
+
+on:
+  schedule:
+    # Runs every day at 06:00 UTC (~07:00/08:00 Croatian time depending on DST)
+    - cron: "0 6 * * *"
+  workflow_dispatch: {}
+
+jobs:
+  test-staging:
+    name: Run Playwright tests on Staging
+    runs-on: ubuntu-latest
+    environment: Staging
+
+    env:
+      # Environment selection used by playwright.config.js to pick .env.staging
+      ENV: staging
+      # Values resolved from GitHub Environment "Staging"
+      BASE_URL: ${{ vars.BASE_URL }}
+      EMAIL: ${{ secrets.EMAIL }}
+      PASSWORD: ${{ secrets.PASSWORD }}
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Install Playwright browsers
+        run: npx playwright install --with-deps
+
+      - name: Run Playwright tests (staging)
+        run: npm run test:staging
+
+      - name: Upload Playwright HTML report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: playwright-report
+          path: playwright-report
+          if-no-files-found: ignore
+
+
